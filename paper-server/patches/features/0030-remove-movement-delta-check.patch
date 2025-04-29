@@ -1,0 +1,36 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Nils Osswald <contact@nilsosswald.de>
+Date: Tue, 29 Apr 2025 15:17:12 +0200
+Subject: [PATCH] remove movement delta check
+
+
+diff --git a/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/net/minecraft/server/network/ServerGamePacketListenerImpl.java
+index 2a00118ecb7b98b6a4365e8b6fc373ed0a2124a1..e3a0a6245d31edfa1ec5ccb8ae21f9d7b6dde1dd 100644
+--- a/net/minecraft/server/network/ServerGamePacketListenerImpl.java
++++ b/net/minecraft/server/network/ServerGamePacketListenerImpl.java
+@@ -613,11 +613,7 @@ public class ServerGamePacketListenerImpl
+                 Location from = new Location(player.getWorld(), this.lastPosX, this.lastPosY, this.lastPosZ, this.lastYaw, this.lastPitch); // Get the Players previous Event location.
+                 Location to = CraftLocation.toBukkit(packet.position(), player.getWorld(), packet.yRot(), packet.xRot());
+ 
+-                // Prevent 40 event-calls for less than a single pixel of movement >.>
+-                double delta = Mth.square(this.lastPosX - to.getX()) + Mth.square(this.lastPosY - to.getY()) + Mth.square(this.lastPosZ - to.getZ());
+-                float deltaAngle = Math.abs(this.lastYaw - to.getYaw()) + Math.abs(this.lastPitch - to.getPitch());
+-
+-                if ((delta > 1f / 256 || deltaAngle > 10f) && !this.player.isImmobile()) {
++                if (!this.player.isImmobile()) {
+                     this.lastPosX = to.getX();
+                     this.lastPosY = to.getY();
+                     this.lastPosZ = to.getZ();
+@@ -1584,11 +1580,7 @@ public class ServerGamePacketListenerImpl
+                                         to.setPitch(packet.xRot);
+                                     }
+ 
+-                                    // Prevent 40 event-calls for less than a single pixel of movement >.>
+-                                    double delta = Mth.square(this.lastPosX - to.getX()) + Mth.square(this.lastPosY - to.getY()) + Mth.square(this.lastPosZ - to.getZ());
+-                                    float deltaAngle = Math.abs(this.lastYaw - to.getYaw()) + Math.abs(this.lastPitch - to.getPitch());
+-
+-                                    if ((delta > 1f / 256 || deltaAngle > 10f) && !this.player.isImmobile()) {
++                                    if (!this.player.isImmobile()) {
+                                         this.lastPosX = to.getX();
+                                         this.lastPosY = to.getY();
+                                         this.lastPosZ = to.getZ();
